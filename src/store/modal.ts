@@ -4,6 +4,7 @@ import produce from "immer";
 interface IModalList {
   shorcut: boolean;
   update: boolean;
+  relaunch: boolean;
 }
 
 type IModalKeys = keyof IModalList;
@@ -18,6 +19,7 @@ export const useModalStore = create<IModalStore>((set) => ({
   modals: {
     shorcut: false,
     update: false,
+    relaunch: false,
   },
   setVisible: (type, status) =>
     set(
@@ -38,4 +40,9 @@ export const showShortcutModal = () => {
 export const showUpdateModal = () => {
   const modalState = getModalState();
   modalState.setVisible("update", true);
+};
+
+export const showRelaunchModal = () => {
+  const modalState = getModalState();
+  modalState.setVisible("relaunch", true);
 };

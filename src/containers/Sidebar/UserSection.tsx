@@ -1,33 +1,10 @@
-import { getVersion } from "@tauri-apps/api/app";
-import { emit, listen } from "@tauri-apps/api/event";
-import { useEffect, useState } from "react";
+import { useCheckUpdate } from "../../hooks/useCheckUpdate";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
-import { showUpdateModal } from "../../store/modal";
 import Settings from "../Settings";
 
 function UserSection() {
-  const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [version, setVersion] = useState("");
+  const { openUpdateModal, updateAvailable, version } = useCheckUpdate();
   const { info } = useCurrentUser();
-
-  const openUpdateModal = () => {
-    if (updateAvailable) {
-      showUpdateModal();
-    }
-  };
-
-  useEffect(() => {
-    getVersion().then((version) => {
-      setVersion(version);
-    });
-
-    listen("tauri://update-available", function (res) {
-      console.log('tauri://update-available', res)
-      setUpdateAvailable(true);
-    });
-
-    emit("tauri://update");
-  }, []);
 
   return (
     <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 border-y border-t-gray-200 border-b-gray-400 dark:border-t-gray-900 dark:border-b-gray-900 flex items-center justify-between">
@@ -53,17 +30,17 @@ function UserSection() {
               }`}
             >
               <span
-                title={`${updateAvailable ? "New version available" : ""}`}
+                title={`${updateAvailable ? "A new version available" : ""}`}
                 className="hover:text-gray-400"
               >
                 v{version}
               </span>
 
               {updateAvailable ? (
-                <div className="relative w-2">
+                <div className="relative w-2" title="A new version available">
                   <span className="absolute top-0 right-0 -mt-1 -mr-1 flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-pink-500"></span>
                   </span>
                 </div>
               ) : null}

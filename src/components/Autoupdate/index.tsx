@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { relaunch } from "@tauri-apps/api/process";
+// import { relaunch } from "@tauri-apps/api/process";
 import { emit, listen } from "@tauri-apps/api/event";
 import Modal from "../Modal";
 import { IoInformationOutline } from "react-icons/io5";
-import { useModalStore } from "../../store/modal";
+import { showRelaunchModal, useModalStore } from "../../store/modal";
 import { message } from "../message";
 
 function Autoupdate() {
@@ -24,6 +24,7 @@ function Autoupdate() {
 
   useEffect(() => {
     let e = "";
+    let _showConfirmLaunch = 0;
     listen<{ error: string | null; status: string }>(
       "tauri://update-status",
       function (res) {
@@ -49,9 +50,11 @@ function Autoupdate() {
           message.info("Downloaded");
         }
 
-        if (status === "DONE") {
-          message.success("Done");
-          relaunch();
+        if (status === "DONE" && !_showConfirmLaunch) {
+          _showConfirmLaunch = 1;
+          // message.success("Done");
+          // relaunch();
+          showRelaunchModal();
         }
 
         console.log(status);
